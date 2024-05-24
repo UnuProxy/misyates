@@ -79,7 +79,7 @@
 </head>
 <body>
    <div class="return-link">
-        <a href="boat-rental-ibiza.html">
+        <a href="/">
             <span class="chevron-left">&lt;</span> Return to all yachts
         </a>
     </div>
@@ -96,39 +96,35 @@
       <a href="#" id="enquire-now-btn">Enquiry Now</a>
   </div>
   </div>
-  
- <div id="enquire-modal" class="modal">
+  <div id="enquire-modal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Enquire availability of this yacht</h2>
         <form id="enquiry-form">
-            <input type="text" id="name" placeholder="Your Name" required>
-            <input type="email" id="email" placeholder="Your Email" required>
-            <input type="tel" id="phone" placeholder="Your Phone Number">
-            <p class="start-date-header">Please select below your preferred charter dates</p>
+            <!-- Concierge/Receptionist Information -->
+            <input type="text" id="concierge-name" name="concierge-name" placeholder="Your Name (Concierge/Receptionist)" required>
+            <input type="email" id="concierge-email" name="concierge-email" placeholder="Your Email" required>
+            <input type="tel" id="concierge-phone" name="concierge-phone" placeholder="Your Phone Number" required>
+
+            <!-- Hotel Information -->
+            <input type="text" id="hotel-name" name="hotel-name" placeholder="Hotel Name" required>
+            
+            <p class="start-date-header">Please select below your client's preferred charter dates</p>
             <label for="start-date">Start Date:</label>
-            <input type="date" id="start-date" required>
+            <input type="date" id="start-date" name="start-date" required>
             <label for="end-date">End Date:</label>
-            <input type="date" id="end-date" required><textarea id="message" placeholder="Your Message" required></textarea>
+            <input type="date" id="end-date" name="end-date" required>
+            
+            <textarea id="message" name="message" placeholder="Additional Notes/Special Requests" required></textarea>
             <input type="hidden" id="yacht-name" name="yachtName">
-             <div class="new-checkbox-area">
-                <input type="checkbox" id="newPolicyAgreement" name="policyAgreement" required>
-                <label for="newPolicyAgreement" class="new-consent-label">
-                    I have read and agree to the 
-                    <a href="#!" class="new-policy-link" onclick="showDataPolicyOverview()" rel="nofollow">Data Policy</a> of Yachts Zenith
-                </label>
-            </div>
+            
             <button type="submit">Submit</button>
         </form>
     </div>
 </div>
-  <div id="dataPolicyOverview" class="data-policy-overview">
-    <span class="close-policy-overview" onclick="closeDataPolicyOverview()">&times;</span>
-    <section class="cookies-section cookies-top-space">
-      <h6 class="cookies-title">Data Policy for Yachts Zenith</h6>
-      <p class="cookies-text">Welcome to Yachts Zenith. This Data Policy explains how Yachts Zenith (referred to as "we", "us", or "our") collects, uses, shares, and safeguards your personal information when you visit our yacht charter website at <a href="https://yachtszenith.com" class="cookies-link">www.yachtszenith.com</a>. We are committed to protecting your privacy and ensuring the security of your data in compliance with the General Data Protection Regulation (GDPR) and Spanish data protection laws.</p>
-  </section>
-<a href="data-policy">Read more here</a>
+
+
+  
   
 </div>
     <div id="about" class="yacht-description">
@@ -167,7 +163,7 @@
         <p class="price-text"></p>
       </div>
       <!-- Add this div for the calendar -->
-      <h2 class="calendar">Boat availability</h2>
+      <h2 class="calendar">Boats availability</h2>
       <div id="calendar-container">
         <div class="calendar-nav">
             <button id="prev-month">Previous Month</button>
@@ -206,140 +202,140 @@
         <button class="carousel-btn" id="next-btn" onclick="move(1)">❯</button>
       </div>
       <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var yachtData = [];
-            var currentMonth = new Date().getMonth();
-            var currentYear = new Date().getFullYear();
-    
-            fetch('yachts.json')
-                .then(response => response.json())
-                .then(data => {
-                    yachtData = data;
-                    populateYachtDetails();
-                });
-    
-            function getYachtById(yachtId) {
-                return yachtData.find(yacht => yacht.id === parseInt(yachtId, 10));
-            }
-    
-            function updateCalendarUrl(calendarId, year, month) {
-                const baseUrl = `${calendarId}&showTitle=0&showNav=1&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0`;
-                const date = new Date(year, month);
-                const formattedDate = `${date.getFullYear()}${('0' + (date.getMonth() + 1)).slice(-2)}01`;
-                return `${baseUrl}&dates=${formattedDate}/${formattedDate}`;
-            }
-    
-            function navigateMonth(offset) {
-                currentMonth += offset;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                } else if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                const yachtId = new URLSearchParams(window.location.search).get('id');
-                const yacht = getYachtById(yachtId);
-                if (yacht && yacht.calendarId) {
-                    const newUrl = updateCalendarUrl(yacht.calendarId, currentYear, currentMonth);
-                    document.getElementById('calendar-iframe').src = newUrl;
-                    document.getElementById('month-select').value = currentMonth;
-                }
-            }
-    
-            function selectMonth(month) {
-                currentMonth = parseInt(month);
-                const yachtId = new URLSearchParams(window.location.search).get('id');
-                const yacht = getYachtById(yachtId);
-                if (yacht && yacht.calendarId) {
-                    const newUrl = updateCalendarUrl(yacht.calendarId, currentYear, currentMonth);
-                    document.getElementById('calendar-iframe').src = newUrl;
-                }
-            }
-    
-            function populateYachtDetails() {
-                const yachtId = new URLSearchParams(window.location.search).get('id');
-                const yacht = getYachtById(yachtId);
-    
-                if (yacht) {
-                    document.querySelector('.main-image').src = yacht.image;
-                    document.querySelector('.main-image').alt = yacht.name;
-                    document.querySelector('.yacht-name').textContent = yacht.name;
-                    document.querySelector('.description-text').textContent = yacht.description;
-                    document.querySelector('.price-text').textContent = yacht.price;
-    
-                    if (yacht.calendarId) {
-                        const initialUrl = updateCalendarUrl(yacht.calendarId, currentYear, currentMonth);
-                        document.getElementById('calendar-iframe').src = initialUrl;
-                        document.getElementById('calendar-container').style.display = 'block';
-                    } else {
-                        document.getElementById('calendar-container').style.display = 'none';
-                    }
-                } else {
-                    console.error('Yacht not found');
-                }
-            }
-    
-            $('#enquire-now-btn').on('click', function(e) {
-                e.preventDefault();
-                const yachtId = new URLSearchParams(window.location.search).get('id');
-                const yacht = getYachtById(yachtId);
-                $('#yacht-name').val(yacht.name);
-                $('#enquire-modal').show();
-            });
-    
-            $('.close').on('click', function() {
-                $('#enquire-modal').hide();
-            });
-    
-            $(window).on('click', function(e) {
-                if ($(e.target).is('#enquire-modal')) {
-                    $('#enquire-modal').hide();
-                }
-            });
-    
-            $('#enquiry-form').submit(function(e) {
-                e.preventDefault();
-                const formData = {
-                    name: $('#name').val(),
-                    email: $('#email').val(),
-                    phone: $('#phone').val(),
-                    startDate: $('#start-date').val(),
-                    endDate: $('#end-date').val(),
-                    message: $('#message').val(),
-                    yachtName: $('#yacht-name').val(),
-                    policyAgreement: $('#newPolicyAgreement').is(':checked')
-                };
-    
-                $.ajax({
-                    url: 'https://usebasin.com/f/5901228062f3',
-                    method: 'POST',
-                    data: formData,
-                    dataType: 'json',
-                    success: function(data) {
-                        alert('Thank you for your enquiry!');
-                        $('#enquiry-form').trigger("reset");
-                        $('#enquire-modal').hide();
-                    },
-                    error: function(err) {
-                        alert('Something went wrong, please try again.');
-                    }
-                });
-            });
-    
-            document.getElementById('prev-month').addEventListener('click', function() {
-                navigateMonth(-1);
-            });
-    
-            document.getElementById('next-month').addEventListener('click', function() {
-                navigateMonth(1);
-            });
-    
-            document.getElementById('month-select').addEventListener('change', function() {
-                selectMonth(this.value);
-            });
-            document.getElementById('month-select').value = currentMonth;
+       document.addEventListener("DOMContentLoaded", function() {
+    var yachtData = [];
+    var currentMonth = new Date().getMonth();
+    var currentYear = new Date().getFullYear();
+
+    fetch('yachts.json')
+        .then(response => response.json())
+        .then(data => {
+            yachtData = data;
+            populateYachtDetails();
         });
+
+    function getYachtById(yachtId) {
+        return yachtData.find(yacht => yacht.id === parseInt(yachtId, 10));
+    }
+
+    function updateCalendarUrl(calendarId, year, month) {
+        const baseUrl = `${calendarId}&showTitle=0&showNav=1&showDate=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0`;
+        const date = new Date(year, month);
+        const formattedDate = `${date.getFullYear()}${('0' + (date.getMonth() + 1)).slice(-2)}01`;
+        return `${baseUrl}&dates=${formattedDate}/${formattedDate}`;
+    }
+
+    function navigateMonth(offset) {
+        currentMonth += offset;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        } else if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        const yachtId = new URLSearchParams(window.location.search).get('id');
+        const yacht = getYachtById(yachtId);
+        if (yacht && yacht.calendarId) {
+            const newUrl = updateCalendarUrl(yacht.calendarId, currentYear, currentMonth);
+            document.getElementById('calendar-iframe').src = newUrl;
+            document.getElementById('month-select').value = currentMonth;
+        }
+    }
+
+    function selectMonth(month) {
+        currentMonth = parseInt(month);
+        const yachtId = new URLSearchParams(window.location.search).get('id');
+        const yacht = getYachtById(yachtId);
+        if (yacht && yacht.calendarId) {
+            const newUrl = updateCalendarUrl(yacht.calendarId, currentYear, currentMonth);
+            document.getElementById('calendar-iframe').src = newUrl;
+        }
+    }
+
+    function populateYachtDetails() {
+        const yachtId = new URLSearchParams(window.location.search).get('id');
+        const yacht = getYachtById(yachtId);
+
+        if (yacht) {
+            document.querySelector('.main-image').src = yacht.image;
+            document.querySelector('.main-image').alt = yacht.name;
+            document.querySelector('.yacht-name').textContent = yacht.name;
+            document.querySelector('.description-text').textContent = yacht.description;
+            document.querySelector('.price-text').textContent = yacht.price;
+
+            if (yacht.calendarId) {
+                const initialUrl = updateCalendarUrl(yacht.calendarId, currentYear, currentMonth);
+                document.getElementById('calendar-iframe').src = initialUrl;
+                document.getElementById('calendar-container').style.display = 'block';
+            } else {
+                document.getElementById('calendar-container').style.display = 'none';
+            }
+        } else {
+            console.error('Yacht not found');
+        }
+    }
+
+    $('#enquire-now-btn').on('click', function(e) {
+        e.preventDefault();
+        const yachtId = new URLSearchParams(window.location.search).get('id');
+        const yacht = getYachtById(yachtId);
+        $('#yacht-name').val(yacht.name);
+        $('#enquire-modal').show();
+    });
+
+    $('.close').on('click', function() {
+        $('#enquire-modal').hide();
+    });
+
+    $(window).on('click', function(e) {
+        if ($(e.target).is('#enquire-modal')) {
+            $('#enquire-modal').hide();
+        }
+    });
+
+    $('#enquiry-form').submit(function(e) {
+        e.preventDefault();
+        const formData = {
+            conciergeName: $('#concierge-name').val(),
+            conciergeEmail: $('#concierge-email').val(),
+            conciergePhone: $('#concierge-phone').val(),
+            hotelName: $('#hotel-name').val(),
+            startDate: $('#start-date').val(),
+            endDate: $('#end-date').val(),
+            message: $('#message').val(),
+            yachtName: $('#yacht-name').val()
+        };
+
+        $.ajax({
+            url: 'https://usebasin.com/f/5901228062f3',
+            method: 'POST',
+            data: formData,
+            dataType: 'json',
+            success: function(data) {
+                alert('Thank you for your enquiry!');
+                $('#enquiry-form').trigger("reset");
+                $('#enquire-modal').hide();
+            },
+            error: function(err) {
+                alert('Something went wrong, please try again.');
+            }
+        });
+    });
+
+    document.getElementById('prev-month').addEventListener('click', function() {
+        navigateMonth(-1);
+    });
+
+    document.getElementById('next-month').addEventListener('click', function() {
+        navigateMonth(1);
+    });
+
+    document.getElementById('month-select').addEventListener('change', function() {
+        selectMonth(this.value);
+    });
+    document.getElementById('month-select').value = currentMonth;
+});
     </script>
     
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
